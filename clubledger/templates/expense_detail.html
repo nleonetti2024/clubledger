@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Expense #{{ e.id }}{% endblock %}
+{% block content %}
+<h1>Expense #{{ e.id }} <span class="status {{ e.status }}">{{ status_labels[e.status] }}</span></h1>
+<p class="muted">Submitted by <strong>{{ e.submitted_by }}</strong> at {{ e.submitted_at }} · {{ e.purpose }} · requested <strong>${{ '%.2f'|format(e.claimed_amount) }}</strong></p>
+
+{% if e.status != 'pending_review' %}
+<div class="card decision">
+  <strong>{{ status_labels[e.status] }}</strong> by {{ e.decided_by }} at {{ e.decided_at }}.
+  {% if e.decision_reason %}<p>“{{ e.decision_reason }}”</p>{% endif %}
+</div>
+{% endif %}
+
+<div class="grid">
+  <section class="card">
+    <h2>Receipt (as stored)</h2>
+    {% if e.redactions %}<p class="small muted">Redacted before storage: {{ e.redactions|join(', ') }}</p>{% endif %}
+    <pre class="receipt">{{ e.receipt_text }}</pre>
+  </section>
+
+  <section class="card">
+    <h2>Fields {% if e.final_fields %}(final){% else %}(proposed by the reader){% endif %}</h2>
+    <dl class="fields">
+      <dt>Vendor</dt><dd>{{ x.vendor or '—' }}</dd>
+      <dt>Date</dt><dd>{{ x.date or '—' }}</dd>
+      <dt>Total</dt><dd>{% if x.total is not none %}${{ '%.2f'|format(x.total) }}{% else %}—{% endif %}</dd>
+      <dt>Category</dt><dd>{{ x.category }}</dd>
+      <dt>Confidence</dt><dd>{{ '%.2f'|format(x.confidence) }}</dd>
+      <dt>Read by</dt><dd><code>{{ x.extractor }}</code></dd>
+    </dl>
+    {% if x.line_items %}
+    <table class="compact">
+      <thead><tr><th>Line item</th><th>Amount</th></tr></thead>
+      <tbody>{% for li in x.line_items %}<tr><td>{{ li.description }}</td><td>${{ '%.2f'|format(li.amount) }}</td></tr>{% endfor %}</tbody>
+    </table>
+    {% endif %}
+    {% if x.notes %}<p class="small muted">Reader notes: {{ x.notes }}</p>{% endif %}
+  </section>
+</div>
+
+<section class="card">
+  <h2>Policy check</h2>
+  {% if is_treasurer %}<p class="advice">Advisory: {{ rec_text }}</p>{% endif %}
+  {% if not e.flags %}
+    <p>No policy flags.</p>
+  {% else %}
+  <ul class="flags">
+    {% for f in e.flags %}
+    <li class="flag {{ f.severity }}">
+      <span class="pill {{ f.severity }}">{{ f.rule_id }} · {{ f.severity }}</span>
+      <strong>{{ f.title }}</strong> — {{ f.message }}
+      <div class="small muted">Policy {{ f.section }}: {{ f.policy_text }}</div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</section>
+
+{% if is_treasurer and e.status == 'pending_review' %}
+<section class="card">
+  <h2>Your decision</h2>
+  <form method="post" action="{{ url_for('main.decide', expense_id=e.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <fieldset>
+      <legend>Correct any field the reader got wrong (changes are logged and the policy check re-runs)</legend>
+      <div class="row">
+        <label>Vendor <input name="vendor" value="{{ x.vendor or '' }}" maxlength="120"></label>
+        <label>Date <input name="date" value="{{ x.date or '' }}" placeholder="YYYY-MM-DD"></label>
+        <label>Total <input name="total" value="{{ '%.2f'|format(x.total) if x.total is not none else '' }}" inputmode="decimal"></label>
+        <label>Category
+          <select name="category">{% for c in categories %}<option value="{{ c }}" {% if c == x.category %}selected{% endif %}>{{ c }}</option>{% endfor %}</select>
+        </label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Decision</legend>
+      <label class="radio"><input type="radio" name="decision" value="approved" required> Approve</label>
+      <label class="radio"><input type="radio" name="decision" value="needs_info"> Ask member for more info</label>
+      <label class="radio"><input type="radio" name="decision" value="rejected"> Reject</label>
+    </fieldset>
+    <label>Reason / note to member
+      <textarea name="reason" rows="3" maxlength="1000"></textarea></label>
+    <p class="small muted">Rejecting or asking for info needs a short reason. Approving an expense with high-severity flags needs a justification of at least {{ min_override }} characters.</p>
+    <button type="submit">Record decision</button>
+  </form>
+</section>
+{% endif %}
+
+<section class="card">
+  <h2>Audit trail</h2>
+  <table class="compact">
+    <thead><tr><th>When (UTC)</th><th>Who</th><th>What</th><th>Details</th></tr></thead>
+    <tbody>
+    {% for a in audit %}
+      <tr><td>{{ a.at }}</td><td>{{ a.actor }}</td><td>{{ a.action }}</td><td><code>{{ a.details|details_json }}</code></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

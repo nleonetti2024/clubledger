@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Audit log{% endblock %}
+{% block content %}
+<h1>Audit log</h1>
+<p class="muted">Append-only record of every submission, automated step and human decision (latest 500). The database refuses edits and deletes to this table.</p>
+<table class="compact">
+  <thead><tr><th>#</th><th>When (UTC)</th><th>Expense</th><th>Who</th><th>What</th><th>Details</th></tr></thead>
+  <tbody>
+  {% for a in events %}
+    <tr>
+      <td>{{ a.id }}</td><td>{{ a.at }}</td>
+      <td>{% if a.expense_id %}<a href="{{ url_for('main.expense_detail', expense_id=a.expense_id) }}">#{{ a.expense_id }}</a>{% endif %}</td>
+      <td>{{ a.actor }}</td><td>{{ a.action }}</td><td><code>{{ a.details|details_json }}</code></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

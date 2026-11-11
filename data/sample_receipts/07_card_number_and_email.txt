@@ -1,0 +1,9 @@
+Coastal Electronics
+11/01/2026
+Arduino Uno board x2         54.00
+Ultrasonic sensor x4         15.96
+Battery pack                 12.99
+Sales Tax                     5.81
+TOTAL                        88.76
+Card: 4111 1111 1111 1111
+Receipt emailed to member.name@example.com

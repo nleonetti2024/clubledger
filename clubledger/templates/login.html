@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<section class="card narrow">
+  <h1>Sign in</h1>
+  <p class="muted">Members submit receipts. The treasurer reviews them and makes every decision.</p>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>Your name <input name="name" required maxlength="80" autocomplete="name"></label>
+    <fieldset>
+      <legend>Role</legend>
+      <label class="radio"><input type="radio" name="role" value="member" checked> Club member</label>
+      <label class="radio"><input type="radio" name="role" value="treasurer"> Treasurer</label>
+    </fieldset>
+    <label>Treasurer PIN <span class="muted">(treasurer only)</span>
+      <input name="pin" type="password" autocomplete="off"></label>
+    <button type="submit">Sign in</button>
+  </form>
+  <p class="muted small">Prototype sign-in: names are not verified, and the treasurer role is protected by one shared PIN. See README → Known limitations.</p>
+</section>
+{% endblock %}

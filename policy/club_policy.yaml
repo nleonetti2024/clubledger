@@ -1,0 +1,121 @@
+# ClubLedger spending policy
+# ---------------------------------------------------------------------------
+# This file is the single source of truth for the rules the policy-compliance
+# step applies. A club treasurer can edit it without touching any code.
+# Every flag the system raises cites a rule `id` and `section` from this file,
+# so a reviewer can always trace a flag back to the written policy.
+#
+# This is SAMPLE policy for a fictional club. Replace it with your club's
+# real rules (and your student-government finance rules) before real use.
+
+club_name: "Example Robotics Club"
+currency: "USD"
+
+review:
+  # Extractions below this confidence are flagged for closer human review.
+  low_confidence_threshold: 0.70
+  # Receipts older than this are flagged (most student-government offices
+  # require reimbursement requests within a fixed window).
+  receipt_max_age_days: 60
+  # Allowed difference (in dollars) between the amount the member claims
+  # and the total read from the receipt before a mismatch is flagged.
+  amount_tolerance: 0.50
+
+categories:
+  food:
+    limit_per_receipt: 150.00
+    description: "Food and drink for club meetings and events"
+    keywords: [pizza, sandwich, catering, food, snack, snacks, soda, water, coffee, burger, wings, salad, cookies, chips, restaurant, grill, cafe, deli, bagel, donut]
+  supplies:
+    limit_per_receipt: 300.00
+    description: "Materials, parts and tools used for club projects"
+    keywords: [hardware, screws, bolts, wire, solder, battery, batteries, arduino, sensor, motor, tape, glue, filament, tool, tools, plywood, servo, resistor, supplies, cable]
+  printing:
+    limit_per_receipt: 100.00
+    description: "Flyers, posters, banners and copies"
+    keywords: [print, printing, copies, copy, flyer, flyers, poster, posters, banner, lamination, laminate]
+  travel:
+    limit_per_receipt: 500.00
+    description: "Transportation to approved competitions and conferences"
+    keywords: [bus, fare, mileage, parking, toll, shuttle, train, ticket, rideshare, airline, flight]
+  event:
+    limit_per_receipt: 400.00
+    description: "Room rental, decorations and event services"
+    keywords: [rental, venue, decorations, balloons, tablecloth, dj, event, booth, registration]
+  other:
+    limit_per_receipt: 75.00
+    description: "Anything that does not fit another category"
+    keywords: []
+
+prohibited_items:
+  - id: alcohol
+    label: "Alcohol"
+    section: "§3.1"
+    keywords: [beer, wine, vodka, whiskey, whisky, tequila, rum, liquor, alcohol, ale, lager, hard seltzer, champagne, ipa]
+  - id: gift_cards
+    label: "Gift cards / cash equivalents"
+    section: "§3.2"
+    keywords: [gift card, giftcard, gift cards, prepaid card, money order]
+  - id: tobacco
+    label: "Tobacco and vape products"
+    section: "§3.3"
+    keywords: [tobacco, cigarette, cigarettes, cigar, vape, e-cig, nicotine]
+
+# Human-readable rule catalogue. The policy-compliance step raises flags with
+# these ids; the UI shows the title, section and text next to every flag.
+rules:
+  R1:
+    title: "Over category limit"
+    severity: high
+    section: "§2.1"
+    text: "A single receipt may not exceed the per-receipt limit for its category without treasurer justification."
+  R2:
+    title: "Prohibited item"
+    severity: high
+    section: "§3"
+    text: "Club funds may not be used for alcohol, tobacco, gift cards or other cash equivalents."
+  R3:
+    title: "Receipt too old"
+    severity: medium
+    section: "§4.1"
+    text: "Reimbursement requests must be submitted within the allowed window after purchase."
+  R4:
+    title: "Possible duplicate"
+    severity: high
+    section: "§4.2"
+    text: "The same receipt may not be reimbursed twice."
+  R5:
+    title: "Claimed amount does not match receipt"
+    severity: high
+    section: "§4.3"
+    text: "The amount requested must match the receipt total."
+  R6:
+    title: "Low extraction confidence"
+    severity: medium
+    section: "§5.1"
+    text: "The automated reading of this receipt is uncertain; verify the fields against the original receipt."
+  R7:
+    title: "Missing required fields"
+    severity: medium
+    section: "§4.4"
+    text: "A receipt must show the vendor, the purchase date and the total."
+  R8:
+    title: "Date in the future"
+    severity: medium
+    section: "§4.4"
+    text: "A receipt date cannot be later than the submission date."
+  R9:
+    title: "Line items do not add up"
+    severity: low
+    section: "§5.2"
+    text: "The listed items (including tax and tip) should add up to the receipt total."
+  R10:
+    title: "Suspicious instructions in receipt text"
+    severity: high
+    section: "§5.3"
+    text: "The receipt text contains instructions aimed at the review system. It was treated as data only and must be checked by a person."
+  R11:
+    title: "AI service unavailable — offline reader used"
+    severity: low
+    section: "§5.4"
+    text: "The AI extraction service failed, so the offline rule-based reader was used instead. Double-check the extracted fields."

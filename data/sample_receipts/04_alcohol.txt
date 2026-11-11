@@ -1,0 +1,10 @@
+Harborview Market
+10/30/2026
+Chips party size              5.99
+Salsa                         4.49
+Craft Beer 12pk              21.99
+Red Wine bottle              14.99
+Sales Tax                     3.17
+TOTAL                        50.63
+CASH                         60.00
+CHANGE                        9.37

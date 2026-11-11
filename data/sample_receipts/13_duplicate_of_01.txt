@@ -1,0 +1,11 @@
+OWL CITY PIZZA CO.
+1200 Glades Rd, Boca Raton FL
+11/05/2026  6:42 PM
+Large Cheese Pizza x3        45.00
+Large Pepperoni Pizza x1     17.00
+Garlic Knots                  8.50
+2L Soda x4                   11.96
+Sales Tax                     3.94
+TOTAL                        86.40
+VISA ************4242        86.40
+Thank you!

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Review queue{% endblock %}
+{% block content %}
+<h1>Review queue</h1>
+<p class="muted">Sorted with the most serious flags first. Nothing here is approved until you decide.</p>
+{% if not pending %}
+  <p class="card">Nothing is waiting for review.</p>
+{% else %}
+<table>
+  <thead><tr><th>#</th><th>Member</th><th>Purpose</th><th>Claimed</th><th>Receipt total</th><th>Flags</th><th></th></tr></thead>
+  <tbody>
+  {% for e in pending %}
+    <tr>
+      <td>{{ e.id }}</td>
+      <td>{{ e.submitted_by }}</td>
+      <td>{{ e.purpose }}</td>
+      <td>${{ '%.2f'|format(e.claimed_amount) }}</td>
+      <td>{% if e.extraction.total is not none %}${{ '%.2f'|format(e.extraction.total) }}{% else %}<em>unknown</em>{% endif %}</td>
+      <td>
+        {% for f in e.flags %}<span class="pill {{ f.severity }}" title="{{ f.title }}">{{ f.rule_id }}</span>{% else %}<span class="pill none">none</span>{% endfor %}
+      </td>
+      <td><a class="button" href="{{ url_for('main.expense_detail', expense_id=e.id) }}">Review</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<h2>Recently decided</h2>
+{% if not decided %}<p class="muted">No decisions yet.</p>{% else %}
+<table>
+  <thead><tr><th>#</th><th>Member</th><th>Purpose</th><th>Status</th><th>By</th><th>Reason</th></tr></thead>
+  <tbody>
+  {% for e in decided %}
+    <tr>
+      <td><a href="{{ url_for('main.expense_detail', expense_id=e.id) }}">{{ e.id }}</a></td>
+      <td>{{ e.submitted_by }}</td><td>{{ e.purpose }}</td>
+      <td><span class="status {{ e.status }}">{{ status_labels[e.status] }}</span></td>
+      <td>{{ e.decided_by }}</td><td>{{ e.decision_reason }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

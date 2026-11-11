@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Submit expense{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Submit an expense</h1>
+  <p class="muted">Paste the text of your receipt or upload it as a .txt file. Card numbers and e-mail addresses are removed automatically before anything is stored or read by the AI.</p>
+  <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>What was it for?
+      <input name="purpose" required maxlength="300" value="{{ form.purpose }}" placeholder="Pizza for the Nov 5 general meeting"></label>
+    <label>Amount you are requesting (USD)
+      <input name="claimed_amount" required inputmode="decimal" value="{{ form.claimed_amount }}" placeholder="86.40"></label>
+    <label>Receipt text
+      <textarea name="receipt_text" rows="14" placeholder="Paste the receipt here">{{ form.receipt_text }}</textarea></label>
+    <label>…or upload a .txt receipt <input type="file" name="receipt_file" accept=".txt,text/plain"></label>
+    <button type="submit">Submit for review</button>
+  </form>
+</section>
+{% endblock %}

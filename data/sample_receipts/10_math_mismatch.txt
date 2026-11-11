@@ -1,0 +1,8 @@
+Bagel Barn
+11/06/2026
+Bagels dozen x2              26.00
+Cream cheese tub x2           9.00
+Coffee box                   18.50
+Sales Tax                     3.75
+TOTAL                        67.25
+VISA                         67.25

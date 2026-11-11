@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Spending policy{% endblock %}
+{% block content %}
+<h1>Spending policy — {{ p.club_name }}</h1>
+<p class="muted">Loaded from <code>policy/club_policy.yaml</code>. Every flag in the app cites one of the rules below.</p>
+
+<section class="card">
+  <h2>Category limits (per receipt)</h2>
+  <table class="compact">
+    <thead><tr><th>Category</th><th>Limit</th><th>Covers</th></tr></thead>
+    <tbody>{% for name, c in p.categories.items() %}
+      <tr><td>{{ name }}</td><td>${{ '%.2f'|format(c.limit_per_receipt) }}</td><td>{{ c.description }}</td></tr>
+    {% endfor %}</tbody>
+  </table>
+</section>
+
+<section class="card">
+  <h2>Prohibited purchases</h2>
+  <ul>{% for item in p.prohibited_items %}<li><strong>{{ item.label }}</strong> ({{ item.section }})</li>{% endfor %}</ul>
+</section>
+
+<section class="card">
+  <h2>Review rules</h2>
+  <table class="compact">
+    <thead><tr><th>Rule</th><th>Severity</th><th>Section</th><th>Text</th></tr></thead>
+    <tbody>{% for rid, r in p.rules.items() %}
+      <tr><td>{{ rid }} · {{ r.title }}</td><td><span class="pill {{ r.severity }}">{{ r.severity }}</span></td><td>{{ r.section }}</td><td>{{ r.text }}</td></tr>
+    {% endfor %}</tbody>
+  </table>
+  <p class="small muted">Receipts older than {{ p.receipt_max_age_days }} days and readings with confidence below {{ p.low_confidence_threshold }} are flagged. Claimed amounts may differ from the receipt by at most ${{ '%.2f'|format(p.amount_tolerance) }}.</p>
+</section>
+{% endblock %}

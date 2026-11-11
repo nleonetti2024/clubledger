@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}My expenses{% endblock %}
+{% block content %}
+<h1>My expenses</h1>
+{% if not expenses %}
+  <p class="card">You have not submitted anything yet. <a href="{{ url_for('main.submit') }}">Submit an expense</a>.</p>
+{% else %}
+<table>
+  <thead><tr><th>#</th><th>Purpose</th><th>Amount</th><th>Status</th><th>Treasurer note</th></tr></thead>
+  <tbody>
+  {% for e in expenses %}
+    <tr>
+      <td><a href="{{ url_for('main.expense_detail', expense_id=e.id) }}">{{ e.id }}</a></td>
+      <td>{{ e.purpose }}</td>
+      <td>${{ '%.2f'|format(e.claimed_amount) }}</td>
+      <td><span class="status {{ e.status }}">{{ status_labels[e.status] }}</span></td>
+      <td>{{ e.decision_reason or '' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

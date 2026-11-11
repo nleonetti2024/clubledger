@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# Tools
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local data and secrets — never commit
+.env
+instance/
+*.sqlite3
+*.db
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
