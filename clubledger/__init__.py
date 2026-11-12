@@ -13,7 +13,7 @@ from .config import DEV_SECRET_KEY, DEV_TREASURER_PIN, PROJECT_ROOT, Config, loa
 from .extraction import build_extractor, today
 from .policy import load_policy
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 log = logging.getLogger("clubledger")
 

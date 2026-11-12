@@ -1,6 +1,6 @@
 [project]
 name = "clubledger"
-version = "1.0.0"
+version = "1.0.1"
 description = "AI-assisted expense review for student clubs, with the treasurer in charge of every decision."
 readme = "README.md"
 license = { file = "LICENSE" }
